@@ -8,22 +8,40 @@ export default {
         return {
             pokemons: [],
             page: 1,
-            totalPages: null
+            totalPages: null,
+            pagesToShow: 10
         }
     },
     components: {
         CardPokemon
     },
     methods: {
-        async getPokemonList() {
-            const response = await apiService.get(API_URLS.getList, {});
+        async getPokemonList(page) {
+            let params = {
+                page: page,
+            }
+            const response = await apiService.get(API_URLS.getList, params);
             this.pokemons = response.docs;
             this.page = response.page;
             this.totalPages = response.totalPages;
-        }
+        },
+        changePage(pageNumber) {
+            this.getPokemonList(pageNumber);
+        },
     },
     created() {
         this.getPokemonList();
+    },
+    computed: {
+        displayedPages() {
+            const startPage = Math.max(1, this.page - Math.floor(this.pagesToShow / 2));
+            const endPage = Math.min(this.totalPages, startPage + this.pagesToShow - 1);
+            const pages = [];
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+            }
+            return pages;
+        },
     }
 }
 </script>
@@ -38,6 +56,27 @@ export default {
                         <CardPokemon :pokemon="pokemon" />
                     </div>
                 </div>
+            </div>
+            <div class="col-12 d-flex justify-content-center mt-3">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" @click="changePage(page - 1)" :disabled="page == 1" href="#"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-for="pageNumber in displayedPages" :key="pageNumber">
+                            <a class="page-link" href="#" @click="changePage(pageNumber)">{{ pageNumber }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" @click="changePage(page + 1)" :disabled="page == totalPages"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
