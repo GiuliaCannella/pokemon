@@ -14,10 +14,7 @@ import { faBoltLightning } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faBoltLightning);
 
-import axios from "axios";
-
 const app = createApp(App);
 
-app.config.globalProperties.axios = axios;
 app.component("FontAwesomeIcon", FontAwesomeIcon);
 app.mount("#app");

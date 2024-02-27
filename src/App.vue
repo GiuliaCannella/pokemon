@@ -1,13 +1,24 @@
 <script>
-export default {
+import Main from './components/pokemons/Main.vue'
 
+export default {
+  data() {
+    return {
+    }
+  },
+  components: {
+    Main,
+  },
+  methods: {
+  },
 }
 </script>
 
 
-<template >
-  <h1 class="text-danger">ciao</h1>
-  <FontAwesomeIcon icon="fas fa-bolt-lightning" />
+<template>
+  <div class="container-fluid">
+    <Main />
+  </div>
 </template>
 
 
