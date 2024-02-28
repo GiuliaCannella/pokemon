@@ -9,7 +9,9 @@ export default {
             pokemons: [],
             page: 1,
             totalPages: null,
-            pagesToShow: 10
+            pagesToShow: 10,
+            species: [],
+            searchSpecie: ''
         }
     },
     components: {
@@ -19,7 +21,13 @@ export default {
         async getPokemonList(page) {
             let params = {
                 page: page,
+            };
+            if (this.searchSpecie != null && this.searchSpecie != '') {
+                params["eq[type1]"] = this.searchSpecie
             }
+            console.log(params);
+
+
             const response = await apiService.get(API_URLS.getList, params);
             this.pokemons = response.docs;
             this.page = response.page;
@@ -28,9 +36,17 @@ export default {
         changePage(pageNumber) {
             this.getPokemonList(pageNumber);
         },
+
+        async getSpecie() {
+            const response = await apiService.get(API_URLS.getPokemonType1, {});
+            this.species = response;
+
+        }
     },
+
     created() {
         this.getPokemonList();
+        this.getSpecie();
     },
     computed: {
         displayedPages() {
@@ -49,6 +65,18 @@ export default {
 
 <template>
     <div class="bg-danger py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-8 offset-2 mb-4">
+                    <select v-model="searchSpecie" @change="getPokemonList(page)" class="form-select form-select-lg mb-3"
+                        aria-label="Large select example">
+                        <option selected value>All</option>
+                        <option :value="specie" v-for="specie in species">{{ specie }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-8 container-card offset-2">
                 <div class="row flex-wrap">
